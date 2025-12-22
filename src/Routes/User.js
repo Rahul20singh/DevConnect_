@@ -4,8 +4,32 @@ const UserRouter = app.Router();
 
 const User = require("../models/user");
 
-UserRouter.get("/user", (req, res) => {
-  res.send("user Page");
+UserRouter.get("/user", async (req, res) => {
+  try {
+    let userEmail = req.body.emailId;
+    if (!userEmail) {
+      throw new Error("pls pass the emailid");
+    } else {
+      let userData = await User.findOne({ email: userEmail });
+      res.json(userData);
+    }
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
+UserRouter.delete("/user", async (req, res) => {
+  try {
+    let userId = req.body.userId;
+    if (!userId) {
+      throw new Error("pls pass the userId");
+    } else {
+      let userData = await User.findByIdAndDelete(userId);
+      res.send("user deleted successfully");
+    }
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
 });
 
 UserRouter.post("/signup", async (req, res) => {
