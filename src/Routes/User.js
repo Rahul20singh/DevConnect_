@@ -22,4 +22,17 @@ UserRouter.post("/signup", async (req, res) => {
   }
 });
 
+UserRouter.get("/feed", async (req, res) => {
+  try {
+    let users = await User.find({});
+    if (users.length == 0) {
+      throw new Error("users not found");
+    } else {
+      res.json({ msg: "get all the users", data: users });
+    }
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+});
+
 module.exports = UserRouter;
