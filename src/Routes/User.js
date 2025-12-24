@@ -32,6 +32,34 @@ UserRouter.delete("/user", async (req, res) => {
   }
 });
 
+UserRouter.patch("/user/:userId", async (req, res) => {
+  try {
+    let userId = req.params.userId;
+    let data = req.body;
+
+    const allowedUpdates = ["userId", "age", "skills", "about"];
+
+    let isAllowed = Object.keys(data).every((val) =>
+      allowedUpdates.includes(val)
+    );
+
+    if (!isAllowed) {
+      throw new Error("update not allowed");
+    }
+    if (!userId) {
+      throw new Error("pls pass the userId");
+    } else {
+      let userData = await User.findByIdAndUpdate(userId, data, {
+        returnDocument: "after",
+        runValidators: true,
+      });
+      res.send("user updated successfully");
+    }
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
 UserRouter.post("/signup", async (req, res) => {
   const userData = req.body;
   console.log("userData:::::::::::", userData);
